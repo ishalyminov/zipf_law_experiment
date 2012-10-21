@@ -37,7 +37,7 @@ class RuscorporaAnnotatedTextParser(xml.sax.handler.ContentHandler):
         self.sentences = []
         self.words_buffer = []
         self.char_buffer = ''
-        self.output_encoding = encode_to
+        self.out_encoding = encode_to
 
     def startElement(self, name, attrs):
         if name == 'se':
@@ -48,8 +48,9 @@ class RuscorporaAnnotatedTextParser(xml.sax.handler.ContentHandler):
     def endElement(self, name):
         if name == 'w':
             self.within_word = False
-            if self.output_encoding:
-                self.char_buffer = self.char_buffer.encode(self.output_encoding)
+            self.char_buffer = self.char_buffer.lower()
+            if self.out_encoding:
+                self.char_buffer = self.char_buffer.encode(self.out_encoding)
             if len(self.char_buffer):
                 self.words_buffer.append(self.char_buffer)
             self.char_buffer = ''
