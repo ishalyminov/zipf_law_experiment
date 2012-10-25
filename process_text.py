@@ -11,9 +11,6 @@ parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.insert(0, os.path.join(parentdir, 'associative_text_model'))
 import model_builder
 
-PLOTS_FOLDER = './plots_frequency_rank_raw'
-CHARTS_FOLDER = './charts_frequency_rank_raw'
-
 def write_words_chart(in_result_file_name, in_freq_dictionary, in_critical_freq):
     TOP_SIZE = 10
     sorted_dictionary = sorted(in_freq_dictionary.items(),
@@ -46,10 +43,10 @@ def process_file(in_source_name, in_text_name):
     fls_freq_dictionary = freq_dictionary.build_full_link_set_dictionary(sentences)
     critical_freq = model_builder.calculate_critical_frequency(raw_freq_dictionary)
 
-    plot_filename = os.path.join(PLOTS_FOLDER, in_text_name + '.png')
-    plotting.make_plot(plot_filename, raw_freq_dictionary.values(), critical_freq)
-    chart_filename = os.path.join(CHARTS_FOLDER, in_text_name + '.txt')
-    write_words_chart(chart_filename, raw_freq_dictionary, critical_freq)
+    plot_filename = os.path.join('./plots_frequency_rank_stopped', in_text_name + '.png')
+    plotting.make_plot(plot_filename, stopped_freq_dictionary.values(), critical_freq)
+    chart_filename = os.path.join('./charts_frequency_rank_stopped', in_text_name + '.txt')
+    write_words_chart(chart_filename, stopped_freq_dictionary, critical_freq)
 
 def process_folder(in_root_folder):
     for root, dirs, files in os.walk(in_root_folder):
@@ -61,13 +58,23 @@ def process_folder(in_root_folder):
             print >>sys.stderr, 'INFO: processing file %s' % source_name
             process_file(source_name, name)
 
+def prepare_folders():
+    if os.path.exists('./plots_frequency_rank_stopped'):
+        os.path.rmdir('./plots_frequency_rank_stopped')
+    if os.path.exists('./plots_frequency_rank_fls'):
+        os.path.rmdir('./plots_frequency_rank_fls')
+    if os.path.exists('./charts_frequency_rank_stopped'):
+        os.path.rmdir('./charts_frequency_rank_stopped')
+    if os.path.exists('./charts_frequency_rank_fls'):
+        os.path.rmdir('./charts_frequency_rank_fls')
+    os.mkdir('./plots_frequency_rank_stopped')
+    os.mkdir('./plots_frequency_rank_fls')
+    os.mkdir('./charts_frequency_rank_stopped')
+    os.mkdir('./charts_frequency_rank_fls')
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         exit('Usage: process_text.py <text file name>')
-
+    prepare_folders()
     input_folder = sys.argv[1]
-    if not os.path.exists(PLOTS_FOLDER):
-        os.mkdir(PLOTS_FOLDER)
-    if not os.path.exists(CHARTS_FOLDER):
-        os.mkdir(CHARTS_FOLDER)
     process_folder(input_folder)
