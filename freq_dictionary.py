@@ -7,6 +7,7 @@ parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.insert(0, os.path.join(parentdir, 'associative_text_model'))
 import link_lexemes
 import model_builder
+import dict_config
 
 DEFAULT_LANGUAGE = 'russian'
 
@@ -18,13 +19,13 @@ def tokenize_text(in_sentences):
         sentences.append([token for token in sentence_tokens])
     return sentences
 
-# making a frequency dictionary from a word sequence
-def build_raw_freq_dictionary(in_tokenized_sentences):
-    result = collections.defaultdict(lambda: 0)
-    for sentence in in_tokenized_sentences:
-        for token in sentence:
-            result[token] += 1
-    return result
+def build_freq_dictionary(in_sentences, in_dict_type):
+    dictionary = build_stopped_freq_dictionary(in_sentences)
+    if in_dict_type == 's_dict':
+        return dictionary
+    elif in_dict_type == 'fs_dict':
+        result_dict = {word:count for (word, count) in dictionary.iteritems() if count > 1}
+        return result_dict
 
 # making a frequency dictionary from a word sequence with stopwords filtering
 def build_stopped_freq_dictionary(in_tokenized_sentences, in_language = DEFAULT_LANGUAGE):
