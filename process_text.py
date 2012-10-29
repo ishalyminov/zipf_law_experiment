@@ -45,7 +45,7 @@ def process_file(in_source_name, in_text_name):
         freq_dict = freq_dictionary.build_freq_dictionary(sentences, dictionary)
         critical_freq = model_builder.calculate_critical_frequency(freq_dict)
         plot_filename = os.path.join('./plots_%s' % dictionary, in_text_name + '.png')
-        plotting.make_plot(plot_filename, freq_dict.values(), critical_freq)
+        plotting.make_plot(plot_filename, handler.text_info, freq_dict.values(), critical_freq)
         chart_filename = os.path.join('./charts_%s' % dictionary, in_text_name + '.txt')
         write_words_chart(chart_filename, freq_dict, critical_freq)
 

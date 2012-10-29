@@ -38,12 +38,18 @@ class RuscorporaAnnotatedTextParser(xml.sax.handler.ContentHandler):
         self.words_buffer = []
         self.char_buffer = ''
         self.out_encoding = encode_to
+        self.text_info = {'grauthor':'', 'words':0, 'sentences':0, 'header':''}
 
     def startElement(self, name, attrs):
         if name == 'se':
             self.within_sentence = True
         if name == 'w':
             self.within_word = True
+        if name == 'meta':
+            if 'name' in attrs:
+                for key in self.text_info:
+                    if attrs['name'] == key:
+                        self.text_info[key] = attrs['content']
 
     def endElement(self, name):
         if name == 'w':
