@@ -7,11 +7,15 @@ import shutil
 import xml_processing
 import freq_dictionary
 import plotting
+import matplotlib.pyplot as plot
 
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.insert(0, os.path.join(parentdir, 'associative_text_model'))
 import model_builder
 import dict_config
+
+GLOBAL_SENTENCES_STAT = {'sentence_counts':[], 'dominant_counts':[]}
+GLOBAL_WORDS_STAT = {'word_counts':[], 'dominant_counts':[]}
 
 def write_words_chart(in_result_file_name, in_freq_dictionary, in_critical_freq):
     TOP_SIZE = 10
@@ -49,6 +53,13 @@ def process_file(in_source_name, in_text_name):
         chart_filename = os.path.join('./charts_%s' % dictionary, in_text_name + '.txt')
         write_words_chart(chart_filename, freq_dict, critical_freq)
 
+        if (dictionary == 'fs_dict'):
+            dominant_lexemes = [lexeme for lexeme in freq_dict if freq_dict[lexeme] > critical_freq]
+            GLOBAL_SENTENCES_STAT['sentence_counts'].append(int(handler.text_info['sentences']))
+            GLOBAL_SENTENCES_STAT['dominant_counts'].append(len(dominant_lexemes))
+            GLOBAL_WORDS_STAT['word_counts'].append(int(handler.text_info['words']))
+            GLOBAL_WORDS_STAT['dominant_counts'].append(len(dominant_lexemes))
+
 def process_folder(in_root_folder):
     for root, dirs, files in os.walk(in_root_folder):
         for text_file in files:
@@ -58,6 +69,16 @@ def process_folder(in_root_folder):
             source_name = os.path.join(root, text_file)
             print >>sys.stderr, 'INFO: processing file %s' % source_name
             process_file(source_name, name)
+    plot.scatter(GLOBAL_WORDS_STAT['word_counts'], GLOBAL_WORDS_STAT['dominant_counts'])
+    plot.xlim(0, 20000)
+    plot.title('Word count - dominant lexemes number correlation')
+    plot.savefig('./dominant_word_count_correlation.png')
+    plot.clf()
+    plot.scatter(GLOBAL_SENTENCES_STAT['sentence_counts'], GLOBAL_SENTENCES_STAT['dominant_counts'])
+    plot.xlim(0, 2000)
+    plot.title('Sentence count - dominant lexemes number correlation')
+    plot.savefig('./dominant_sentence_count_correlation.png')
+    plot.clf()
 
 def prepare_folders():
     for dictionary in dict_config.DICTS:
