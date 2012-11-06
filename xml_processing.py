@@ -1,4 +1,5 @@
 import xml.sax
+import re
 
 # raw text in ruscorpora is a set of paragraphs enclosed in <p> </p> tags
 # and some <meta>-attributes in the header
@@ -56,15 +57,20 @@ class RuscorporaAnnotatedTextParser(xml.sax.handler.ContentHandler):
             self.within_word = False
             self.char_buffer = self.char_buffer.lower()
             if self.out_encoding:
-                self.char_buffer = self.char_buffer.encode(self.out_encoding)
-            if len(self.char_buffer):
-                self.words_buffer.append(self.char_buffer)
+                self.add_word(self.char_buffer)
             self.char_buffer = ''
         if name == 'se':
             self.within_sentence = False
             if len(self.words_buffer):
                 self.sentences.append(self.words_buffer)
             self.words_buffer = []
+
+    def add_word(self, in_word):
+        in_word = re.sub('^\W+|\W+$', '', in_word, flags = re.UNICODE)
+        if len(in_word) and not in_word.isdigit():
+            if self.out_encoding:
+                in_word = in_word.encode(self.out_encoding)
+            self.words_buffer.append(in_word)
 
     def characters(self, ch):
         # only collect word forms char-by-char

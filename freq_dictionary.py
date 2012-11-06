@@ -26,6 +26,16 @@ def build_freq_dictionary(in_sentences, in_dict_type):
     elif in_dict_type == 'fs_dict':
         result_dict = {word:count for (word, count) in dictionary.iteritems() if count > 1}
         return result_dict
+    elif in_dict_type == 'raw_dict':
+        return build_raw_freq_dictionary(in_sentences)
+
+
+def build_raw_freq_dictionary(in_tokenized_sentences):
+    result = collections.defaultdict(lambda: 0)
+    for sentence in in_tokenized_sentences:
+        for token in sentence:
+            result[token] += 1
+    return result
 
 # making a frequency dictionary from a word sequence with stopwords filtering
 def build_stopped_freq_dictionary(in_tokenized_sentences, in_language = DEFAULT_LANGUAGE):
