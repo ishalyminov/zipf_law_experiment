@@ -11,7 +11,7 @@ import matplotlib.pyplot as plot
 
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.insert(0, os.path.join(parentdir, 'associative_text_model'))
-import model_builder
+import text_model
 import dict_config
 import critical_frequency_analysis
 import numpy
@@ -45,9 +45,19 @@ def write_words_chart(in_result_file_name, in_freq_dictionary, in_critical_freq)
 def different_dictionaries_experiment(in_text_name, in_text_handler):
     for dictionary in dict_config.DICTS:
         freq_dict = freq_dictionary.build_freq_dictionary(in_text_handler.sentences, dictionary)
-        critical_freq = model_builder.calculate_critical_frequency(freq_dict)
-        plot_filename = os.path.join('./plots_%s' % dictionary, in_text_name + '.png')
-        plotting.make_plot(plot_filename, in_text_handler.text_info, freq_dict.values(), critical_freq)
+        critical_freq = text_model.calculate_critical_frequency(freq_dict)
+        empirical_critical_freq = critical_frequency_analysis.get_empirical_critical_frequency(freq_dict.values())
+        plot_filename = os.path.join('./plots_w_cr_%s' % dictionary, in_text_name + '.png')
+        plotting.make_plot_with_critical_frequency(plot_filename, \
+                                                   in_text_handler.text_info, \
+                                                   freq_dict.values(), \
+                                                   critical_freq)
+        two_w_cr_plot_filename = os.path.join('./plots_two_w_cr_%s' % dictionary, in_text_name + '.png')
+        plotting.make_plot_with_two_critical_frequencies(two_w_cr_plot_filename, \
+                                                         in_text_handler.text_info, \
+                                                         freq_dict.values(), \
+                                                         critical_freq,
+                                                         empirical_critical_freq)
         chart_filename = os.path.join('./charts_%s' % dictionary, in_text_name + '.txt')
         write_words_chart(chart_filename, freq_dict, critical_freq)
 
@@ -60,11 +70,12 @@ def different_dictionaries_experiment(in_text_name, in_text_handler):
             critical_frequency_error = critical_frequency_analysis.get_critical_frequency_error(freq_dict)
             GLOBAL_CRITICAL_FREQUENCY_ERROR_STAT.append(critical_frequency_error)
 
-def ideal_critical_frequency_experiment(in_text_name, in_text_handler):
-    freq_dict = freq_dictionary.build_freq_dictionary(in_text_handler.sentences, 'fs_dict')
-    critical_freq = critical_frequency_analysis.get_ideal_critical_frequency(freq_dict.values())
-    chart_filename = os.path.join('./charts_ideal_critical_frequency', in_text_name + '.txt')
-    write_words_chart(chart_filename, freq_dict, critical_freq)
+def empirical_critical_frequency_experiment(in_text_name, in_text_handler):
+    for dictionary in ['fs_dict', 'assoc_power_dict']:
+        freq_dict = freq_dictionary.build_freq_dictionary(in_text_handler.sentences, dictionary)
+        critical_freq = critical_frequency_analysis.get_empirical_critical_frequency(freq_dict.values())
+        chart_filename = os.path.join('./charts_empirical_%s' % dictionary, in_text_name + '.txt')
+        write_words_chart(chart_filename, freq_dict, critical_freq)
 
 def process_file(in_source_name, in_text_name):
     parser = xml.sax.make_parser()
@@ -72,8 +83,10 @@ def process_file(in_source_name, in_text_name):
     parser.setContentHandler(handler)
     parser.parse(in_source_name)
 
+    associative_model = text_model.AssociativeModel(handler.sentences, 'russian')
+
     different_dictionaries_experiment(in_text_name, handler)
-    ideal_critical_frequency_experiment(in_text_name, handler)
+    empirical_critical_frequency_experiment(in_text_name, handler)
 
 def process_folder(in_root_folder):
     for root, dirs, files in os.walk(in_root_folder):
@@ -103,23 +116,28 @@ def process_folder(in_root_folder):
     print 'Critical frequency error variance: ', numpy.var(GLOBAL_CRITICAL_FREQUENCY_ERROR_STAT)
 
 def prepare_folders():
-    if os.path.exists('./charts_ideal_critical_frequency'):
-        shutil.rmtree('./charts_ideal_critical_frequency')
-    os.mkdir('./charts_ideal_critical_frequency')
+    for dictionary in ['fs_dict', 'assoc_power_dict']:
+        if os.path.exists('./charts_empirical_%s' % dictionary):
+            shutil.rmtree('./charts_empirical_%s' % dictionary)
+        os.mkdir('./charts_empirical_%s' % dictionary)
 
     for dictionary in dict_config.DICTS:
-        plots_folder_name = './plots_%s' % dictionary
+        plots_w_cr_folder_name = './plots_w_cr_%s' % dictionary
+        plots_two_w_cr_folder_name = './plots_two_w_cr_%s' % dictionary
         charts_folder_name = './charts_%s' % dictionary
-        if os.path.exists(plots_folder_name):
-            shutil.rmtree(plots_folder_name)
-        os.mkdir(plots_folder_name)
+        if os.path.exists(plots_w_cr_folder_name):
+            shutil.rmtree(plots_w_cr_folder_name)
+        os.mkdir(plots_w_cr_folder_name)
+        if os.path.exists(plots_two_w_cr_folder_name):
+            shutil.rmtree(plots_two_w_cr_folder_name)
+        os.mkdir(plots_two_w_cr_folder_name)
         if os.path.exists(charts_folder_name):
             shutil.rmtree(charts_folder_name)
         os.mkdir(charts_folder_name)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        exit('Usage: process_text.py <text file name>')
+        exit('Usage: process_text.py <texts root folder>')
     prepare_folders()
     input_folder = sys.argv[1]
     process_folder(input_folder)
