@@ -29,7 +29,7 @@ def write_words_chart(in_result_file_name, in_freq_dictionary, in_critical_freq)
                     if count > in_critical_freq]
     non_dominants = [(word, count) for (word, count) in sorted_dictionary
                         if count <= in_critical_freq]
-    non_dominants_top = non_dominants[:TOP_SIZE]
+    non_dominants_top = non_dominants[:]
     out_file = open(in_result_file_name, 'w')
     print >>out_file, 'Dominant lexemes'
     print >>out_file, '================'
@@ -83,8 +83,6 @@ def process_file(in_source_name, in_text_name):
     parser.setContentHandler(handler)
     parser.parse(in_source_name)
 
-    associative_model = text_model.AssociativeModel(handler.sentences, 'russian')
-
     different_dictionaries_experiment(in_text_name, handler)
     empirical_critical_frequency_experiment(in_text_name, handler)
 
@@ -113,7 +111,7 @@ def process_folder(in_root_folder):
                             GLOBAL_CRITICAL_FREQUENCY_ERROR_STAT, \
                             in_normed = False)
     print 'Critical frequency error mean: ', numpy.mean(GLOBAL_CRITICAL_FREQUENCY_ERROR_STAT)
-    print 'Critical frequency error variance: ', numpy.var(GLOBAL_CRITICAL_FREQUENCY_ERROR_STAT)
+    print 'Critical frequency error variance: ', numpy.std(GLOBAL_CRITICAL_FREQUENCY_ERROR_STAT)
 
 def prepare_folders():
     for dictionary in ['fs_dict', 'assoc_power_dict']:

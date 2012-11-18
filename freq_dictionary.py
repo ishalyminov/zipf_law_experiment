@@ -5,8 +5,10 @@ import os
 
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.insert(0, os.path.join(parentdir, 'associative_text_model'))
+import text_model
 import link_lexemes
 import common
+
 import dict_config
 
 DEFAULT_LANGUAGE = 'russian'
@@ -30,6 +32,9 @@ def build_freq_dictionary(in_sentences, in_dict_type):
         return build_raw_freq_dictionary(in_sentences)
     elif in_dict_type == 'assoc_power_dict':
         return build_associative_power_dictionary(in_sentences)
+    elif in_dict_type == 'assoc_model_dict':
+        assoc_model = text_model.AssociativeModel(in_sentences, DEFAULT_LANGUAGE)
+        return text_model.get_freq_dict(assoc_model)
 
 
 def build_raw_freq_dictionary(in_tokenized_sentences):

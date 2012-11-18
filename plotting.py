@@ -17,12 +17,13 @@ def make_plot(in_file_name, in_info, in_frequencies):
     plot.clf()
 
 def make_plot_with_critical_frequency(in_file_name, in_info, in_frequencies, in_critical_frequency):
-    frequencies_sorted = sorted(set(in_frequencies))
-    ranks = [len(frequencies_sorted) - index for index in xrange(len(frequencies_sorted))]
-    max_rank = len(ranks)
-    min_freq = min(frequencies_sorted)
-    plot.scatter(ranks, frequencies_sorted)
-    plot.plot(ranks, [min_freq + max_rank - rank for rank in ranks], label = 'r = R - w', color = 'green')
+    if len(in_frequencies):
+        frequencies_sorted = sorted(set(in_frequencies))
+        ranks = [len(frequencies_sorted) - index for index in xrange(len(frequencies_sorted))]
+        max_rank = len(ranks)
+        min_freq = min(frequencies_sorted)
+        plot.scatter(ranks, frequencies_sorted)
+        plot.plot(ranks, [min_freq + max_rank - rank for rank in ranks], label = 'r = R - w', color = 'green')
     title_pattern = (in_info['grauthor'], in_info['header'], in_info['sentences'], in_info['words'])
     plot.title('%s. %s: %s sentences, %s words' % title_pattern)
     plot.xlabel('rank')
@@ -38,12 +39,13 @@ def make_plot_with_two_critical_frequencies(in_file_name, \
                                             in_frequencies, \
                                             in_theoretical_w_cr,
                                             in_empirical_w_cr):
-    frequencies_sorted = sorted(set(in_frequencies))
-    ranks = [len(frequencies_sorted) - index for index in xrange(len(frequencies_sorted))]
-    max_rank = len(ranks)
-    min_freq = min(frequencies_sorted)
-    plot.scatter(ranks, frequencies_sorted)
-    plot.plot(ranks, [min_freq + max_rank - rank for rank in ranks], label = 'r = R - w', color = 'green')
+    if len(in_frequencies):
+        frequencies_sorted = sorted(set(in_frequencies))
+        ranks = [len(frequencies_sorted) - index for index in xrange(len(frequencies_sorted))]
+        max_rank = len(ranks)
+        min_freq = min(frequencies_sorted)
+        plot.scatter(ranks, frequencies_sorted)
+        plot.plot(ranks, [min_freq + max_rank - rank for rank in ranks], label = 'r = R - w', color = 'green')
     title_pattern = (in_info['grauthor'], in_info['header'], in_info['sentences'], in_info['words'])
     plot.title('%s. %s: %s sentences, %s words' % title_pattern)
     plot.xlabel('rank')
