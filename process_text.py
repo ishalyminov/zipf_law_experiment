@@ -4,7 +4,7 @@ import operator
 import os
 import shutil
 
-import xml_processing
+import text_reading
 import freq_dictionary
 import plotting
 import matplotlib.pyplot as plot
@@ -79,7 +79,7 @@ def empirical_critical_frequency_experiment(in_text_name, in_text_handler):
 
 def process_file(in_source_name, in_text_name):
     parser = xml.sax.make_parser()
-    handler = xml_processing.RuscorporaAnnotatedTextParser(encode_to = 'utf-8')
+    handler = text_reading.RuscorporaAnnotatedTextParser(encode_to = 'utf-8')
     parser.setContentHandler(handler)
     parser.parse(in_source_name)
 
