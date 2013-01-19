@@ -57,8 +57,8 @@ def make_plot_with_two_critical_frequencies(in_file_name, \
     plot.savefig(in_file_name)
     plot.clf()
 
-def make_histogram(in_file_name, in_title, in_values, in_normed = True):
-    plot.hist(in_values, normed=in_normed)
+def make_histogram(in_file_name, in_title, in_values, in_normed = True, in_bins = 10):
+    plot.hist(in_values, normed=in_normed, bins = in_bins)
     plot.title(in_title)
     plot.grid(True)
     plot.savefig(in_file_name)
