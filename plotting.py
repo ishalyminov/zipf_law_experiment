@@ -1,6 +1,7 @@
 #coding: utf-8
 
 import matplotlib.pyplot as plot
+import numpy
 
 
 def make_plot(in_file_name, in_info, in_frequencies):
@@ -93,8 +94,9 @@ class Histogram(object):
 
     def save(self):
         opacity = 1. / float(len(self.data))
+        bins = numpy.linspace(0, 200, self.bins_number)
         for values, label in self.data:
-            plot.hist(values, label=label, normed=self.normed, bins=self.bins_number, alpha=opacity)
+            plot.hist(values, label=label, normed=self.normed, bins=bins, alpha=opacity)
 
         plot.legend()
         plot.savefig(self.filename)
