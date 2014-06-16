@@ -1,4 +1,7 @@
+#coding: utf-8
+
 import matplotlib.pyplot as plot
+
 
 def make_plot(in_file_name, in_info, in_frequencies):
     frequencies_sorted = sorted(set(in_frequencies))
@@ -15,6 +18,7 @@ def make_plot(in_file_name, in_info, in_frequencies):
     plot.legend()
     plot.savefig(in_file_name)
     plot.clf()
+
 
 def make_plot_with_critical_frequency(in_file_name, in_info, in_frequencies, in_critical_frequency):
     if len(in_frequencies):
@@ -34,9 +38,10 @@ def make_plot_with_critical_frequency(in_file_name, in_info, in_frequencies, in_
     plot.savefig(in_file_name)
     plot.clf()
 
-def make_plot_with_two_critical_frequencies(in_file_name, \
-                                            in_info, \
-                                            in_frequencies, \
+
+def make_plot_with_two_critical_frequencies(in_file_name,
+                                            in_info,
+                                            in_frequencies,
                                             in_theoretical_w_cr,
                                             in_empirical_w_cr):
     if len(in_frequencies):
@@ -57,9 +62,41 @@ def make_plot_with_two_critical_frequencies(in_file_name, \
     plot.savefig(in_file_name)
     plot.clf()
 
-def make_histogram(in_file_name, in_title, in_values, in_normed = True, in_bins = 10):
-    plot.hist(in_values, normed=in_normed, bins = in_bins)
+
+def make_histogram(in_file_name, in_title, in_values, normed=True, bins=10):
+    plot.hist(in_values, normed=normed, bins=bins)
     plot.title(in_title)
     plot.grid(True)
     plot.savefig(in_file_name)
     plot.clf()
+
+
+class Histogram(object):
+    def __init__(self,
+                 in_plot_title,
+                 in_x_label,
+                 in_y_label,
+                 in_plot_file_name, normed=True, bins_number=10):
+        self.filename = in_plot_file_name
+        self.normed = normed
+        self.bins_number = bins_number
+        plot.clf()
+        plot.title(in_plot_title)
+        plot.xlabel(in_x_label)
+        plot.ylabel(in_y_label)
+        plot.grid(True)
+
+        self.data = []
+
+    def add_histogram(self, in_values, label):
+        self.data.append((in_values, label))
+
+    def save(self):
+        opacity = 1. / float(len(self.data))
+        for values, label in self.data:
+            plot.hist(values, label=label, normed=self.normed, bins=self.bins_number, alpha=opacity)
+
+        plot.legend()
+        plot.savefig(self.filename)
+        plot.clf()
+

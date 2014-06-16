@@ -1,3 +1,6 @@
 [submodule "text_reading"]
 	path = text_reading
 	url = https://github.com/ishalyminov/text_reading.git
+[submodule "ruscorpora_ngrams"]
+	path = ruscorpora_ngrams
+	url = https://github.com/ishalyminov/ruscorpora_ngrams
