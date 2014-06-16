@@ -16,7 +16,7 @@ STOPWORDS = nltk.corpus.stopwords.words('russian')
 
 def count_map_to_array(in_count_map):
     result = []
-    for statistic, count in in_count_map.items()[5:-5]:
+    for statistic, count in in_count_map.items()[5:]:
         for appearance in xrange(count):
             result.append(statistic)
     return result
@@ -58,7 +58,7 @@ def make_plot(in_count_stream, in_mode, in_output_file):
     x_label = u'%s слова в документе' % (u'Частота' if in_mode == 'freq' else u'Ранг')
     y_label = u'Количество слов с %s' %\
               (u'данной частотой' if in_mode == 'freq' else u'данным рангом')
-    histogram = plotting.Histogram(u'Распределение частот частот слов',
+    histogram = plotting.Histogram(u'Распределение частот слов',
                                    x_label,
                                    y_label,
                                    in_output_file,
@@ -78,5 +78,5 @@ if __name__ == '__main__':
         exit(0)
     mode, text_root, output_file = sys.argv[1:4]
     temp_file_name = 'word_counts_per_docs.txt'
-    count_words(text_root, temp_file_name)
+    # count_words(text_root, temp_file_name)
     make_plot(open(temp_file_name), mode, output_file)
